@@ -91,15 +91,14 @@ exports.update = async (req, res) => {
     //save new task to database
     //send back response to client
     //console.log(req.body.newFTask)
-    try {
-        // Construct a document  
-        let id = {_id: req.param.id}
+    try { 
+        let id = {_id: req.params.id}
         let {title, description } = await req.body;
         let task = {
             title,
             description,
         }
-        // Insert a single document, wait for promise so we can read it back
+        //Replace existing user task with updated task
         let update = await todoDB.findOneAndUpdate(id, task, {new: true});
         if (!update){
             return res.status(400).json({
@@ -122,13 +121,11 @@ exports.update = async (req, res) => {
 //This function is to delete an existing task
 exports.deleteUser = async (req, res) => {
     try {
-        let id = {_id: req.param.id}
-        let {title, description } = await req.body;
-        let task = {
-            title,
-            description,
-        }
+        let id = {_id: req.params.id}
+        
         let deleted = await todoDB.findOneAndRemove(id);
+        console.log(deleted)
+        console.log(id)
         if (!deleted){
             return res.status(400).json({
                 message: 'Task not deleted!',
@@ -137,7 +134,7 @@ exports.deleteUser = async (req, res) => {
 
         res.status(201).json({
             message: "Todo task successfully deleted",
-            task: update
+            task: deleted
         })
 
     } catch (err) {
